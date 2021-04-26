@@ -1,15 +1,16 @@
-// require  and constants 
+const mysql = require('mysql2')
 const inquirer = require('inquirer')
 require('dotenv').config()
-// const sql = require('mysqul2")
-// const app = require ('express')
+const consoleTable = require('console.table')
+
+ 
+// create the connection to database
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,
-    port: 3306,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: 'etracker_db'
-})
+  });
 
 connection.connect((err) => {
     if (err) throw err;
