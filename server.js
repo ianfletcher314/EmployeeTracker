@@ -12,10 +12,26 @@ const connection = mysql.createConnection({
     database: 'etracker_db'
   });
 
+  const start = () => {
+    inquirer
+      .prompt({
+        name: 'choiceEnder',
+        type: 'list',
+        message: 'What would you like to do',
+        choices: ['View Departments', 'View Roles', 'View Employees','Add Department','Add Role','Add Employee',
+        'Update Employee Role','EXIT'],
+      })
+      .then((answer) => {
+        // based on their answer, either call the bid or the post functions
+       console.log(answer)
+      });
+  };
+
 connection.connect((err) => {
     if (err) throw err;
     // run the start function after the connection is made to prompt the user
     console.log("thankGoditsworking");
+    start();
   });
 
 
