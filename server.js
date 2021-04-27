@@ -57,8 +57,20 @@ const start = () => {
 
 
 // View Functions 
-const viewDepartmentsFunction = (answer) => {
+const viewDepartmentsFunction = async (answer) => {
   console.log(answer," view dept function")
+  let comboArray = []
+  connection.query(
+    'SELECT * FROM etracker_db.department;',
+    function(err, results) {
+      // console.log(results,"are working");
+      for (let i = 0; i < results.length; i++) {
+        comboArray.push(results[i].name)
+      }
+      console.log(comboArray)
+    })
+   
+
   start()
 }
 const viewRolesFunction = (answer) => {
