@@ -59,27 +59,34 @@ const start = () => {
 // View Functions 
 const viewDepartmentsFunction = (answer) => {
   console.log(answer," view dept function")
+  start()
 }
 const viewRolesFunction = (answer) => {
   console.log(answer, "view Functin ROle")
+  start()
 }
 const viewEmployeesFunction = (answer) => {
   console.log(answer,"view employee function")
+  start()
 }
 const addEmployeesFunction = (answer) => {
   console.log(answer," add employee function")
+  start()
 }
 const addDepartmentsFunction = (answer) => {
   console.log(answer, "add department function")
+  start()
 }
 const addRolesFunction = (answer) => {
   console.log(answer, "add roles function")
+  start()
 }
 const updateEmployeeRoleFunction = (answer) => {
   console.log(answer, "update employee role fuction")
+  start()
 }
 const exitFunction = (answer) => {
-  console.log(answer)
+  console.log("THANKS FOR STOPPING BY! SEE YOU NEXT TIME! (┛ಠДಠ)┛彡┻━┻ ")
 }
 // Add Functions 
 
