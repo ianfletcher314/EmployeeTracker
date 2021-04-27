@@ -24,30 +24,30 @@ const start = () => {
 
     .then((answer) => {
       // based on their answer, either call the bid or the post functions
-      console.log(answer)
+      console.log(answer,"is coming through")
       if (answer.choiceEnder === 'View Departments') {
-        console.log("do view departments pleaseee")
+        viewDepartmentsFunction(answer)
       }
       if (answer.choiceEnder === 'View Roles') {
-        console.log("do View Roles pleaseee")
+        viewRolesFunction(answer)
       }
       if (answer.choiceEnder === 'View Employees') {
-        console.log("do 'View Employees' pleaseee")
+        viewEmployeesFunction(answer)
       }
       if (answer.choiceEnder === 'Add Department') {
-        console.log("do 'Add Department' pleaseee")
+        addDepartmentsFunction(answer)
       }
       if (answer.choiceEnder === 'Add Role') {
-        console.log("do'Add Role' pleaseee")
+        addRolesFunction(answer)
       }
       if (answer.choiceEnder === 'Add Employee') {
-        console.log("do 'Add Employee' pleaseee")
+        addEmployeesFunction(answer)
       }
       if (answer.choiceEnder === 'Update Employee Role') {
-        console.log("do 'Update Employee Role' pleaseee")
+        updateEmployeeRoleFunction(answer)
       }
       if (answer.choiceEnder === 'EXIT') {
-        console.log('EXIT')
+        exitFunction(answer)
       }
     });
 };
@@ -57,7 +57,30 @@ const start = () => {
 
 
 // View Functions 
-
+const viewDepartmentsFunction = (answer) => {
+  console.log(answer," view dept function")
+}
+const viewRolesFunction = (answer) => {
+  console.log(answer, "view Functin ROle")
+}
+const viewEmployeesFunction = (answer) => {
+  console.log(answer,"view employee function")
+}
+const addEmployeesFunction = (answer) => {
+  console.log(answer," add employee function")
+}
+const addDepartmentsFunction = (answer) => {
+  console.log(answer, "add department function")
+}
+const addRolesFunction = (answer) => {
+  console.log(answer, "add roles function")
+}
+const updateEmployeeRoleFunction = (answer) => {
+  console.log(answer, "update employee role fuction")
+}
+const exitFunction = (answer) => {
+  console.log(answer)
+}
 // Add Functions 
 
 
