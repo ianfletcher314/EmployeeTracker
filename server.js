@@ -24,7 +24,7 @@ const start = () => {
 
     .then(async (answer) => {
       // based on their answer, we filter them to functions that corespond to thier choice bellow.
-      console.log(answer, "is coming through")
+      // console.log(answer, "is coming through")
       if (answer.choiceEnder === 'View Departments') {
         await viewDepartmentsFunction();
         start()
@@ -107,13 +107,8 @@ const employeeData = () =>{
       LEFT JOIN employee manager on employee.manager_id = manager.id`,
       function (err, results) {
         const employeeResults = console.table(results)
-        console.log(employeeResults)
         resolve(employeeResults)
-
-
       })
-
-
   })
 }
 
@@ -156,7 +151,7 @@ const viewRolesFunction = async() => {
   // once it gets the answer it asks which department does the user want to look at
   inquirer
     .prompt({
-      name: 'departments',
+      name: 'role',
       type: 'list',
       message: 'What role would you like to view.',
       choices: roleDataArray,
@@ -168,45 +163,20 @@ const viewRolesFunction = async() => {
     FROM employee 
       LEFT JOIN role ON employee.role_id = role.id 
       WHERE role.title = ? 
-     `, data.departments,(err,res)=>{
+     `, data.role,(err,res)=>{
         if (err) throw err
-        console.log("\nhere are your results for the department you selected\n\n")
-        const departmentResults = console.table(res)
-        resolve(departmentResults)
+        console.log("\nHere are the employees with the role you selected\n\n")
+        const roleResults = console.table(res)
+        resolve(roleResults)
       })
     })
   })
-
-
 }
 const viewEmployeesFunction = async() => {
   return new Promise (async(resolve,reject) => {
   const employeeDataArray = await employeeData()
   console.log(employeeDataArray)
   resolve(employeeDataArray)
-  // console.log(departmentDataArray)
-  // once it gets the answer it asks which department does the user want to look at
-  // inquirer
-  //   .prompt({
-  //     name: 'departments',
-  //     type: 'list',
-  //     message: 'What department would you like to view.',
-  //     choices: roleDataArray,
-  //   })
-  //   // once they answer we query our database for a list of employees in the department they want
-  //   .then((data) => {
-  //     connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
-  //     role.title 
-  //   FROM employee 
-  //     LEFT JOIN role ON employee.role_id = role.id 
-  //     WHERE role.title = ? 
-  //    `, data.departments,(err,res)=>{
-  //       if (err) throw err
-  //       console.log("\nhere are your results for the department you selected\n\n")
-  //       const departmentResults = console.table(res)
-  //       resolve(departmentResults)
-  //     })
-  //   })
   })
 
 
