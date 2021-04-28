@@ -22,31 +22,25 @@ const start = () => {
         'Update Employee Role', 'EXIT'],
     })
 
-    .then((answer) => {
+    .then(async (answer) => {
       // based on their answer, either call the bid or the post functions
-      console.log(answer,"is coming through")
+      console.log(answer, "is coming through")
       if (answer.choiceEnder === 'View Departments') {
-        viewDepartmentsFunction(answer)
-      }
-      if (answer.choiceEnder === 'View Roles') {
+        await viewDepartmentsFunction();
+        start()
+      } else if (answer.choiceEnder === 'View Roles') {
         viewRolesFunction(answer)
-      }
-      if (answer.choiceEnder === 'View Employees') {
+      } else if (answer.choiceEnder === 'View Employees') {
         viewEmployeesFunction(answer)
-      }
-      if (answer.choiceEnder === 'Add Department') {
+      } else if (answer.choiceEnder === 'Add Department') {
         addDepartmentsFunction(answer)
-      }
-      if (answer.choiceEnder === 'Add Role') {
+      } else if (answer.choiceEnder === 'Add Role') {
         addRolesFunction(answer)
-      }
-      if (answer.choiceEnder === 'Add Employee') {
+      } else if (answer.choiceEnder === 'Add Employee') {
         addEmployeesFunction(answer)
-      }
-      if (answer.choiceEnder === 'Update Employee Role') {
+      } else if (answer.choiceEnder === 'Update Employee Role') {
         updateEmployeeRoleFunction(answer)
-      }
-      if (answer.choiceEnder === 'EXIT') {
+      } else if (answer.choiceEnder === 'EXIT') {
         exitFunction(answer)
       }
     });
@@ -55,34 +49,64 @@ const start = () => {
 // these functions will  run a serries of SQL querries using innerjoin leftjoin outer join 
 // etc to combine the tables I have created and present them to the user using console.table
 
+const departmentData = () => {
+  return new Promise(async (resolve, reject) => {
 
+
+    let comboArray = []
+    connection.query(
+      'SELECT * FROM etracker_db.department;',
+      function (err, results) {
+        // console.log(results,"are working");
+        for (let i = 0; i < results.length; i++) {
+          // console.log(results[i].name)
+          comboArray.push(results[i].name)
+        }
+        console.log("this is combo array", comboArray)
+        resolve(comboArray)
+
+      })
+  })
+}
 // View Functions 
-const viewDepartmentsFunction = async (answer) => {
-  console.log(answer," view dept function")
-  let comboArray = []
-  connection.query(
-    'SELECT * FROM etracker_db.department;',
-    function(err, results) {
-      // console.log(results,"are working");
-      for (let i = 0; i < results.length; i++) {
-        comboArray.push(results[i].name)
-      }
-      console.log(comboArray)
+const viewDepartmentsFunction = async () => {
+  return new Promise (async(resolve,reject) => {
+  const departmentDataArray = await departmentData()
+  console.log(departmentDataArray)
+  inquirer
+    .prompt({
+      name: 'departments',
+      type: 'list',
+      message: 'What department would you like to view.',
+      choices: departmentDataArray,
     })
-   
+    .then((data) => {
+      connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
+      role.title 
+  FROM employee 
+      LEFT JOIN role ON employee.role_id = role.id 
+      LEFT JOIN department ON department_id = department.id 
+      WHERE department.name = ?`, data.departments,(err,res)=>{
+        if (err) throw err
+        console.log("\nhere are your results for the department you selected\n\n")
+        const departmentResults = console.table(res)
+        resolve(departmentResults)
+      })
+    })
+  })
 
-  start()
+
 }
 const viewRolesFunction = (answer) => {
   console.log(answer, "view Functin ROle")
   start()
 }
 const viewEmployeesFunction = (answer) => {
-  console.log(answer,"view employee function")
+  console.log(answer, "view employee function")
   start()
 }
 const addEmployeesFunction = (answer) => {
-  console.log(answer," add employee function")
+  console.log(answer, " add employee function")
   start()
 }
 const addDepartmentsFunction = (answer) => {
@@ -98,7 +122,7 @@ const updateEmployeeRoleFunction = (answer) => {
   start()
 }
 const exitFunction = (answer) => {
-  console.log("THANKS FOR STOPPING BY! SEE YOU NEXT TIME! (┛ಠДಠ)┛彡┻━┻ ")
+  console.log("THANKS FOR STOPPING BY! SEE YOU NEXT TIME!")
 }
 // Add Functions 
 
