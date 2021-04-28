@@ -7,6 +7,6 @@ VALUES ("Sales Analyst", 30000.00,1),("Sales Manager",60000.00,1),("Financial An
 ("Admin Assistant", 30000.00,4),("Office Manager",60000.00,4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Greg", "Johnson", 1, 2),("Suzie","Smith",2,2),("John","Gerrard",3,4),("Gerraldine","Perry",4,4),
-("Spencer","Walton",5,6),("Georgia","Marrion",6,6),("Sylvester","Sutton",7,8),("Terry","Walsh",8,8);
+VALUES ("Greg", "Johnson", 1, 2),("Suzie","Smith",2,NULL),("John","Gerrard",3,4),("Gerraldine","Perry",4,NULL),
+("Spencer","Walton",5,6),("Georgia","Marrion",6,NULL),("Sylvester","Sutton",7,8),("Terry","Walsh",8,NULL);
 

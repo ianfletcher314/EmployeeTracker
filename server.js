@@ -23,7 +23,7 @@ const start = () => {
     })
 
     .then(async (answer) => {
-      // based on their answer, either call the bid or the post functions
+      // based on their answer, we filter them to functions that corespond to thier choice bellow.
       console.log(answer, "is coming through")
       if (answer.choiceEnder === 'View Departments') {
         await viewDepartmentsFunction();
@@ -49,6 +49,8 @@ const start = () => {
 // these functions will  run a serries of SQL querries using innerjoin leftjoin outer join 
 // etc to combine the tables I have created and present them to the user using console.table
 
+
+// this function querries our database for the list of departments and sends it to the waiting viewDepartmentsFunction
 const departmentData = () => {
   return new Promise(async (resolve, reject) => {
 
@@ -62,17 +64,19 @@ const departmentData = () => {
           // console.log(results[i].name)
           comboArray.push(results[i].name)
         }
-        console.log("this is combo array", comboArray)
+        // console.log("this is combo array", comboArray)
         resolve(comboArray)
 
       })
   })
 }
 // View Functions 
+// this function is waiting for departmentdata() to return. 
 const viewDepartmentsFunction = async () => {
   return new Promise (async(resolve,reject) => {
   const departmentDataArray = await departmentData()
-  console.log(departmentDataArray)
+  // console.log(departmentDataArray)
+  // once it gets the answer it asks which department does the user want to look at
   inquirer
     .prompt({
       name: 'departments',
@@ -80,6 +84,7 @@ const viewDepartmentsFunction = async () => {
       message: 'What department would you like to view.',
       choices: departmentDataArray,
     })
+    // once they answer we query our database for a list of employees in the department they want
     .then((data) => {
       connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
       role.title 
@@ -139,3 +144,21 @@ connection.connect((err) => {
 
 
 
+
+
+// code for get role! 
+
+// .then((data) => {
+//   connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
+//   role.title 
+// FROM employee 
+//   LEFT JOIN role ON employee.role_id = role.id 
+//   WHERE role.name = ?
+//   LEFT JOIN department ON department_id = department.id 
+//  `, data.role,(err,res)=>{
+//     if (err) throw err
+//     console.log("\nhere are your results for the department you selected\n\n")
+//     const departmentResults = console.table(res)
+//     resolve(departmentResults)
+//   })
+// })
