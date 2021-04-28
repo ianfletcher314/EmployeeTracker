@@ -96,6 +96,26 @@ const roleData = () => {
       })
   })
 }
+const employeeData = () =>{
+  return new Promise(async (resolve,reject)=>{
+    let comboArray = []
+    connection.query(
+      `SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
+      role.title, role.salary,department.name AS department, 
+      CONCAT (manager.first_name, " ", manager.last_name) AS manager FROM employee 
+      LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON department_id = department.id 
+      LEFT JOIN employee manager on employee.manager_id = manager.id`,
+      function (err, results) {
+        const employeeResults = console.table(results)
+        console.log(employeeResults)
+        resolve(employeeResults)
+
+
+      })
+
+
+  })
+}
 
 // View Functions 
 // this function is waiting for departmentdata() to return. 
@@ -138,7 +158,7 @@ const viewRolesFunction = async() => {
     .prompt({
       name: 'departments',
       type: 'list',
-      message: 'What department would you like to view.',
+      message: 'What role would you like to view.',
       choices: roleDataArray,
     })
     // once they answer we query our database for a list of employees in the department they want
@@ -159,25 +179,53 @@ const viewRolesFunction = async() => {
 
 
 }
-const viewEmployeesFunction = (answer) => {
-  console.log(answer, "view employee function")
-  start()
+const viewEmployeesFunction = async() => {
+  return new Promise (async(resolve,reject) => {
+  const employeeDataArray = await employeeData()
+  console.log(employeeDataArray)
+  resolve(employeeDataArray)
+  // console.log(departmentDataArray)
+  // once it gets the answer it asks which department does the user want to look at
+  // inquirer
+  //   .prompt({
+  //     name: 'departments',
+  //     type: 'list',
+  //     message: 'What department would you like to view.',
+  //     choices: roleDataArray,
+  //   })
+  //   // once they answer we query our database for a list of employees in the department they want
+  //   .then((data) => {
+  //     connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
+  //     role.title 
+  //   FROM employee 
+  //     LEFT JOIN role ON employee.role_id = role.id 
+  //     WHERE role.title = ? 
+  //    `, data.departments,(err,res)=>{
+  //       if (err) throw err
+  //       console.log("\nhere are your results for the department you selected\n\n")
+  //       const departmentResults = console.table(res)
+  //       resolve(departmentResults)
+  //     })
+  //   })
+  })
+
+
 }
 const addEmployeesFunction = (answer) => {
   console.log(answer, " add employee function")
-  start()
+ 
 }
 const addDepartmentsFunction = (answer) => {
   console.log(answer, "add department function")
-  start()
+  
 }
 const addRolesFunction = (answer) => {
   console.log(answer, "add roles function")
-  start()
+
 }
 const updateEmployeeRoleFunction = (answer) => {
   console.log(answer, "update employee role fuction")
-  start()
+ 
 }
 const exitFunction = (answer) => {
   console.log("༼ง=ಠ益ಠ=༽ง!THANKS FOR STOPPING BY! SEE YOU NEXT TIME!༼ง=ಠ益ಠ=༽ง")
