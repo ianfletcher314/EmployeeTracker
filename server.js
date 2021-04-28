@@ -47,8 +47,8 @@ const start = () => {
         await updateEmployeeRoleFunction(answer)
         start()
       } else if (answer.choiceEnder === 'EXIT') {
-        await exitFunction(answer)
-        start()
+        exitFunction(answer)
+        
       }
     });
 };
@@ -77,6 +77,26 @@ const departmentData = () => {
       })
   })
 }
+const roleData = () => {
+  return new Promise(async (resolve, reject) => {
+
+
+    let comboArray = []
+    connection.query(
+      'SELECT * FROM etracker_db.role;',
+      function (err, results) {
+        // console.log(results,"are working");
+        for (let i = 0; i < results.length; i++) {
+          // console.log(results[i].title)
+          comboArray.push(results[i].title)
+        }
+        // console.log("this is combo array", comboArray)
+        resolve(comboArray)
+
+      })
+  })
+}
+
 // View Functions 
 // this function is waiting for departmentdata() to return. 
 const viewDepartmentsFunction = async () => {
@@ -111,7 +131,7 @@ const viewDepartmentsFunction = async () => {
 }
 const viewRolesFunction = async() => {
   return new Promise (async(resolve,reject) => {
-  const departmentDataArray = await departmentData()
+  const roleDataArray = await roleData()
   // console.log(departmentDataArray)
   // once it gets the answer it asks which department does the user want to look at
   inquirer
@@ -119,16 +139,16 @@ const viewRolesFunction = async() => {
       name: 'departments',
       type: 'list',
       message: 'What department would you like to view.',
-      choices: departmentDataArray,
+      choices: roleDataArray,
     })
     // once they answer we query our database for a list of employees in the department they want
     .then((data) => {
       connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
       role.title 
-  FROM employee 
+    FROM employee 
       LEFT JOIN role ON employee.role_id = role.id 
-      LEFT JOIN department ON department_id = department.id 
-      WHERE department.name = ?`, data.departments,(err,res)=>{
+      WHERE role.title = ? 
+     `, data.departments,(err,res)=>{
         if (err) throw err
         console.log("\nhere are your results for the department you selected\n\n")
         const departmentResults = console.table(res)
@@ -160,7 +180,7 @@ const updateEmployeeRoleFunction = (answer) => {
   start()
 }
 const exitFunction = (answer) => {
-  console.log("THANKS FOR STOPPING BY! SEE YOU NEXT TIME!")
+  console.log("༼ง=ಠ益ಠ=༽ง!THANKS FOR STOPPING BY! SEE YOU NEXT TIME!༼ง=ಠ益ಠ=༽ง")
 }
 // Add Functions 
 
