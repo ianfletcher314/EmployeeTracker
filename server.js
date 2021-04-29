@@ -130,6 +130,17 @@ const employeeRoleData = (data) => {
       `SELECT id FROM role WHERE title = '${data.addEmpRole}'`,
       function (err, results) {
         // console.log(results,"are working");
+        resolve(results[0].id)
+
+      })
+  })
+}
+const addRoleDepartmentData = (data) => {
+  return new Promise(async (resolve, reject) => {
+    connection.query(
+      `SELECT id FROM department WHERE name = '${data.addRoleDepartment}'`,
+      function (err, results) {
+        // console.log(results,"are working");
         console.log("results" ,results[0].id)
         resolve(results[0].id)
 
@@ -262,13 +273,56 @@ const addEmployeesFunction = async() => {
   
  
 }
-const addDepartmentsFunction = (answer) => {
-  console.log(answer, "add department function")
-  
-}
-const addRolesFunction = (answer) => {
-  console.log(answer, "add roles function")
+const addDepartmentsFunction = async () => {
+  return new Promise (async(resolve,rejext)=>{
+    inquirer
+  .prompt([{
+    name: 'addDepartmentName',
+    type: 'input',
+    message: `What is the Department's name?`,
+  }]
+  )
+  // once they answer we query our database for a list of employees in the department they want
+  .then((data) => {
+    console.log(data)
+    resolve(data)
+  })
 
+  })
+  
+ 
+}
+const addRolesFunction = async() => {
+  return new Promise (async(resolve,rejext)=>{
+    const departmentDataArray = await departmentData()
+    inquirer
+  .prompt([{
+    name: 'addRoleTitle',
+    type: 'input',
+    message: 'What is the name of the role?',
+  },
+  {
+    name: 'addRoleSalary',
+    type: 'input',
+    message: 'How much is the employees salary?',
+  },
+  {
+    name: 'addRoleDepartment',
+    type: 'list',
+    message: "What department is this role in?",
+    choices: departmentDataArray,
+  }]
+  )
+  // once they answer we query our database for a list of employees in the department they want
+  .then(async (data) => {
+    data.addRoleDepartment = await addRoleDepartmentData(data)
+    console.log(data)
+    resolve(data)
+  })
+
+  })
+  
+ 
 }
 const updateEmployeeRoleFunction = (answer) => {
   console.log(answer, "update employee role fuction")
