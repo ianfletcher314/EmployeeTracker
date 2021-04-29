@@ -181,8 +181,38 @@ const viewEmployeesFunction = async() => {
 
 
 }
-const addEmployeesFunction = (answer) => {
-  console.log(answer, " add employee function")
+const addEmployeesFunction = async() => {
+  return new Promise (async(resolve,rejext)=>{
+    inquirer
+  .prompt([{
+    name: 'addEmpFirstName',
+    type: 'input',
+    message: 'What is the employees first name?',
+  },
+  {
+    name: 'addEmpLastName',
+    type: 'input',
+    message: 'What is the employees last name?',
+  },
+  {
+    name: 'addEmpRole',
+    type: 'input',
+    message: 'What is the employees Role?',
+  },
+  {
+    name: 'addEmpManager',
+    type: 'input',
+    message: `Who is the employee's Manager? if they're a manager enter "null" `,
+  }]
+  )
+  // once they answer we query our database for a list of employees in the department they want
+  .then((data) => {
+    console.log(data)
+    resolve(data)
+  })
+
+  })
+  
  
 }
 const addDepartmentsFunction = (answer) => {
