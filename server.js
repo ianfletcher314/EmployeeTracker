@@ -3,7 +3,6 @@ const inquirer = require('inquirer')
 require('dotenv').config()
 const consoleTable = require('console.table')
 
-
 // create the connection to database
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -48,13 +47,11 @@ const start = () => {
         start()
       } else if (answer.choiceEnder === 'EXIT') {
         exitFunction(answer)
-        
+
       }
     });
 };
-
-
-// this function querries our database for the list of departments and sends it to the waiting viewDepartmentsFunction
+// Query data functions that take the input from the users and grabs information from our database
 const departmentData = () => {
   return new Promise(async (resolve, reject) => {
 
@@ -129,8 +126,6 @@ const managerRoleData2 = (data) => {
     connection.query(
       `SELECT id FROM employee WHERE CONCAT (first_name, " ", last_name) = '${data.employeeToChange}'`,
       function (err, results) {
-        // console.log(results,"are working");
-        // console.log("results" ,results)
         resolve(results[0].id)
 
       })
@@ -141,7 +136,6 @@ const employeeRoleData = (data) => {
     connection.query(
       `SELECT id FROM role WHERE title = '${data.addEmpRole}'`,
       function (err, results) {
-        // console.log(results,"are working");
         resolve(results[0].id)
 
       })
@@ -152,15 +146,14 @@ const addRoleDepartmentData = (data) => {
     connection.query(
       `SELECT id FROM department WHERE name = '${data.addRoleDepartment}'`,
       function (err, results) {
-        // console.log(results,"are working");
-        console.log("results" ,results[0].id)
+        console.log("results", results[0].id)
         resolve(results[0].id)
 
       })
   })
 }
-const employeeData = () =>{
-  return new Promise(async (resolve,reject)=>{
+const employeeData = () => {
+  return new Promise(async (resolve, reject) => {
     let comboArray = []
     connection.query(
       `SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
@@ -176,187 +169,184 @@ const employeeData = () =>{
 }
 
 // View Functions 
-// this function is waiting for departmentdata() to return. 
 const viewDepartmentsFunction = async () => {
-  return new Promise (async(resolve,reject) => {
-  const departmentDataArray = await departmentData()
-  // console.log(departmentDataArray)
-  // once it gets the answer it asks which department does the user want to look at
-  inquirer
-    .prompt({
-      name: 'departments',
-      type: 'list',
-      message: 'What department would you like to view.',
-      choices: departmentDataArray,
-    })
-    // once they answer we query our database for a list of employees in the department they want
-    .then((data) => {
-      connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
+  return new Promise(async (resolve, reject) => {
+    const departmentDataArray = await departmentData()
+    // once it gets the answer it asks which department does the user want to look at
+    inquirer
+      .prompt({
+        name: 'departments',
+        type: 'list',
+        message: 'What department would you like to view.',
+        choices: departmentDataArray,
+      })
+      // once they answer we query our database for a list of employees in the department they want
+      .then((data) => {
+        connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
       role.title 
   FROM employee 
       LEFT JOIN role ON employee.role_id = role.id 
       LEFT JOIN department ON department_id = department.id 
-      WHERE department.name = ?`, data.departments,(err,res)=>{
-        if (err) throw err
-        console.log("\nhere are your results for the department you selected\n\n")
-        const departmentResults = console.table(res)
-        resolve(departmentResults)
+      WHERE department.name = ?`, data.departments, (err, res) => {
+          if (err) throw err
+          console.log("\nhere are your results for the department you selected\n\n")
+          const departmentResults = console.table(res)
+          resolve(departmentResults)
+        })
       })
-    })
   })
 
 
 }
-const viewRolesFunction = async() => {
-  return new Promise (async(resolve,reject) => {
-  const roleDataArray = await roleData()
-  // console.log(departmentDataArray)
-  // once it gets the answer it asks which department does the user want to look at
-  inquirer
-    .prompt({
-      name: 'role',
-      type: 'list',
-      message: 'What role would you like to view.',
-      choices: roleDataArray,
-    })
-    // once they answer we query our database for a list of employees in the department they want
-    .then((data) => {
-      connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
+const viewRolesFunction = async () => {
+  return new Promise(async (resolve, reject) => {
+    const roleDataArray = await roleData()
+    // once it gets the answer it asks which department does the user want to look at
+    inquirer
+      .prompt({
+        name: 'role',
+        type: 'list',
+        message: 'What role would you like to view.',
+        choices: roleDataArray,
+      })
+      // once they answer we query our database for a list of employees in the department they want
+      .then((data) => {
+        connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
       role.title 
     FROM employee 
       LEFT JOIN role ON employee.role_id = role.id 
       WHERE role.title = ? 
-     `, data.role,(err,res)=>{
-        if (err) throw err
-        console.log("\nHere are the employees with the role you selected\n\n")
-        const roleResults = console.table(res)
-        resolve(roleResults)
+     `, data.role, (err, res) => {
+          if (err) throw err
+          console.log("\nHere are the employees with the role you selected\n\n")
+          const roleResults = console.table(res)
+          resolve(roleResults)
+        })
       })
-    })
   })
 }
-const viewEmployeesFunction = async() => {
-  return new Promise (async(resolve,reject) => {
-  const employeeDataArray = await employeeData()
-  console.log(employeeDataArray)
-  resolve(employeeDataArray)
+const viewEmployeesFunction = async () => {
+  return new Promise(async (resolve, reject) => {
+    const employeeDataArray = await employeeData()
+    console.log(employeeDataArray)
+    resolve(employeeDataArray)
   })
 
 
 }
-const addEmployeesFunction = async() => {
-  return new Promise (async(resolve,rejext)=>{
+
+// Add Functions 
+const addEmployeesFunction = async () => {
+  return new Promise(async (resolve, rejext) => {
     const roleDataArray = await roleData()
     const mgmtDataArray = await mgmtData()
     inquirer
-  .prompt([{
-    name: 'addEmpFirstName',
-    type: 'input',
-    message: 'What is the employees first name?',
-  },
-  {
-    name: 'addEmpLastName',
-    type: 'input',
-    message: 'What is the employees last name?',
-  },
-  {
-    name: 'addEmpRole',
-    type: 'list',
-    message: 'What role does the employee have',
-    choices: roleDataArray,
-  },
-  {
-    name: 'addEmpMngr',
-    type: 'list',
-    message: "Who is the employee's manager?",
-    choices: mgmtDataArray,
-  }]
-  )
-  // once they answer we query our database for a list of employees in the department they want
-  .then(async (data) => {
+      .prompt([{
+        name: 'addEmpFirstName',
+        type: 'input',
+        message: 'What is the employees first name?',
+      },
+      {
+        name: 'addEmpLastName',
+        type: 'input',
+        message: 'What is the employees last name?',
+      },
+      {
+        name: 'addEmpRole',
+        type: 'list',
+        message: 'What role does the employee have',
+        choices: roleDataArray,
+      },
+      {
+        name: 'addEmpMngr',
+        type: 'list',
+        message: "Who is the employee's manager?",
+        choices: mgmtDataArray,
+      }]
+      )
+      // once they answer we query our database for a list of employees in the department they want
+      .then(async (data) => {
 
-    data.addEmpMngr = await managerRoleData(data)
-    data.addEmpRole = await employeeRoleData(data)
-    connection.query(`INSERT INTO employee SET ?`,{
-      first_name: data.addEmpFirstName,
-      last_name: data.addEmpLastName,
-      role_id: data.addEmpRole,
-      manager_id: data.addEmpMngr
-    }
-    )
-    console.log(data)
-    resolve(data)
+        data.addEmpMngr = await managerRoleData(data)
+        data.addEmpRole = await employeeRoleData(data)
+        connection.query(`INSERT INTO employee SET ?`, {
+          first_name: data.addEmpFirstName,
+          last_name: data.addEmpLastName,
+          role_id: data.addEmpRole,
+          manager_id: data.addEmpMngr
+        }
+        )
+        console.log("Employee has been added")
+        resolve(data)
+
+      })
 
   })
 
-  })
-  
- 
+
 }
 const addDepartmentsFunction = async () => {
-  return new Promise (async(resolve,rejext)=>{
+  return new Promise(async (resolve, rejext) => {
     inquirer
-  .prompt([{
-    name: 'addDepartmentName',
-    type: 'input',
-    message: `What is the Department's name?`,
-  }]
-  )
-  // once they answer we query our database for a list of employees in the department they want
-  .then((data) => {
-    connection.query(`INSERT INTO department SET ?`,{
-      name: data.addDepartmentName
-    }
-    )
+      .prompt([{
+        name: 'addDepartmentName',
+        type: 'input',
+        message: `What is the Department's name?`,
+      }]
+      )
+      // once they answer we query our database for a list of employees in the department they want
+      .then((data) => {
+        connection.query(`INSERT INTO department SET ?`, {
+          name: data.addDepartmentName
+        }
+        )
 
-    
-    console.log(data)
-    
-    resolve(data)
+
+        console.log("department has been added")
+
+        resolve(data)
+      })
+
   })
 
-  })
-  
- 
+
 }
-const addRolesFunction = async() => {
-  return new Promise (async(resolve,rejext)=>{
+const addRolesFunction = async () => {
+  return new Promise(async (resolve, rejext) => {
     const departmentDataArray = await departmentData()
     inquirer
-  .prompt([{
-    name: 'addRoleTitle',
-    type: 'input',
-    message: 'What is the name of the role?',
-  },
-  {
-    name: 'addRoleSalary',
-    type: 'input',
-    message: 'How much is the employees salary?',
-  },
-  {
-    name: 'addRoleDepartment',
-    type: 'list',
-    message: "What department is this role in?",
-    choices: departmentDataArray,
-  }]
-  )
-  // once they answer we query our database for a list of employees in the department they want
-  .then(async (data) => {
-    data.addRoleDepartment = await addRoleDepartmentData(data)
-    connection.query(`INSERT INTO role SET ?`,{
-      title: data.addRoleTitle,
-      salary: data.addRoleSalary,
-      department_id: data.addRoleDepartment
-    }
-    )
-    console.log(data)
-    resolve(data)
+      .prompt([{
+        name: 'addRoleTitle',
+        type: 'input',
+        message: 'What is the name of the role?',
+      },
+      {
+        name: 'addRoleSalary',
+        type: 'input',
+        message: 'How much is the employees salary?',
+      },
+      {
+        name: 'addRoleDepartment',
+        type: 'list',
+        message: "What department is this role in?",
+        choices: departmentDataArray,
+      }]
+      )
+      // once they answer we query our database for a list of employees in the department they want
+      .then(async (data) => {
+        data.addRoleDepartment = await addRoleDepartmentData(data)
+        connection.query(`INSERT INTO role SET ?`, {
+          title: data.addRoleTitle,
+          salary: data.addRoleSalary,
+          department_id: data.addRoleDepartment
+        }
+        )
+        console.log("Role Has Been Added")
+        resolve(data)
+      })
   })
-
-  })
-  
- 
 }
+// Update function
 const updateEmployeeRoleFunction = async () => {
   return new Promise(async (resolve, reject) => {
     const employeeDataArray = await mgmtData()
@@ -379,29 +369,21 @@ const updateEmployeeRoleFunction = async () => {
         ]
       )
       .then(async (data) => {
-        console.log(data)
         data.addEmpRole = await employeeRoleData(data)
         data.employeeToChange = await managerRoleData2(data)
         connection.query(`UPDATE employee SET role_id = ${data.addEmpRole} 
         WHERE id = ${data.employeeToChange}`,
         )
-        
+        console.log("Employee has been updated")
         resolve(data)
       })
-      
   }
   )
-  
-
-
 }
 const exitFunction = () => {
   console.log("༼ง=ಠ益ಠ=༽ง!THANKS FOR STOPPING BY! SEE YOU NEXT TIME!༼ง=ಠ益ಠ=༽ง")
   connection.end();
 }
-// Add Functions 
-
-
 
 
 // This is where the connection to mysql is made and where start function is called 
@@ -413,22 +395,3 @@ connection.connect((err) => {
 });
 
 
-
-
-
-// code for get role! 
-
-// .then((data) => {
-//   connection.query(`SELECT CONCAT (employee.first_name, " ", employee.last_name) AS employee, 
-//   role.title 
-// FROM employee 
-//   LEFT JOIN role ON employee.role_id = role.id 
-//   WHERE role.name = ?
-//   LEFT JOIN department ON department_id = department.id 
-//  `, data.role,(err,res)=>{
-//     if (err) throw err
-//     console.log("\nhere are your results for the department you selected\n\n")
-//     const departmentResults = console.table(res)
-//     resolve(departmentResults)
-//   })
-// })
