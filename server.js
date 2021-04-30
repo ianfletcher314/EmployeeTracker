@@ -265,8 +265,16 @@ const addEmployeesFunction = async() => {
 
     data.addEmpMngr = await managerRoleData(data)
     data.addEmpRole = await employeeRoleData(data)
+    connection.query(`INSERT INTO employee SET ?`,{
+      first_name: data.addEmpFirstName,
+      last_name: data.addEmpLastName,
+      role_id: data.addEmpRole,
+      manager_id: data.addEmpMngr
+    }
+    )
     console.log(data)
     resolve(data)
+
   })
 
   })
@@ -284,7 +292,14 @@ const addDepartmentsFunction = async () => {
   )
   // once they answer we query our database for a list of employees in the department they want
   .then((data) => {
+    connection.query(`INSERT INTO department SET ?`,{
+      name: data.addDepartmentName
+    }
+    )
+
+    
     console.log(data)
+    
     resolve(data)
   })
 
