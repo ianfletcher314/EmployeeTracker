@@ -345,12 +345,48 @@ const addRolesFunction = async() => {
   
  
 }
-const updateEmployeeRoleFunction = (answer) => {
-  console.log(answer, "update employee role fuction")
- 
+const updateEmployeeRoleFunction = async () => {
+  return new Promise(async (resolve, reject) => {
+    const employeeDataArray = await mgmtData()
+    const roleDataArray = await roleData()
+    inquirer
+      .prompt(
+        [
+          {
+            name: 'employeeToChange',
+            type: 'list',
+            message: "Which employee do you want to edit",
+            choices: employeeDataArray,
+          },
+          {
+            name: 'addEmpRole',
+            type: 'list',
+            message: `what will the employee's new role be?`,
+            choices: roleDataArray,
+          }
+        ]
+      )
+      .then(async (data) => {
+        data.addEmpRole = await employeeRoleData(data)
+        // connection.query(`INSERT INTO role SET ?`,{
+        //   title: data.addRoleTitle,
+        //   salary: data.addRoleSalary,
+        //   department_id: data.addRoleDepartment
+        // }
+        // )
+        console.log(data)
+        resolve(data)
+      })
+      
+  }
+  )
+  
+
+
 }
-const exitFunction = (answer) => {
+const exitFunction = () => {
   console.log("༼ง=ಠ益ಠ=༽ง!THANKS FOR STOPPING BY! SEE YOU NEXT TIME!༼ง=ಠ益ಠ=༽ง")
+  connection.end();
 }
 // Add Functions 
 
