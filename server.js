@@ -124,6 +124,18 @@ const managerRoleData = (data) => {
       })
   })
 }
+const managerRoleData2 = (data) => {
+  return new Promise(async (resolve, reject) => {
+    connection.query(
+      `SELECT id FROM employee WHERE CONCAT (first_name, " ", last_name) = '${data.employeeToChange}'`,
+      function (err, results) {
+        // console.log(results,"are working");
+        // console.log("results" ,results)
+        resolve(results[0].id)
+
+      })
+  })
+}
 const employeeRoleData = (data) => {
   return new Promise(async (resolve, reject) => {
     connection.query(
@@ -367,14 +379,13 @@ const updateEmployeeRoleFunction = async () => {
         ]
       )
       .then(async (data) => {
-        data.addEmpRole = await employeeRoleData(data)
-        // connection.query(`INSERT INTO role SET ?`,{
-        //   title: data.addRoleTitle,
-        //   salary: data.addRoleSalary,
-        //   department_id: data.addRoleDepartment
-        // }
-        // )
         console.log(data)
+        data.addEmpRole = await employeeRoleData(data)
+        data.employeeToChange = await managerRoleData2(data)
+        connection.query(`UPDATE employee SET role_id = ${data.addEmpRole} 
+        WHERE id = ${data.employeeToChange}`,
+        )
+        
         resolve(data)
       })
       
