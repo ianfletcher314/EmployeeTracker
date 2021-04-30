@@ -331,6 +331,12 @@ const addRolesFunction = async() => {
   // once they answer we query our database for a list of employees in the department they want
   .then(async (data) => {
     data.addRoleDepartment = await addRoleDepartmentData(data)
+    connection.query(`INSERT INTO role SET ?`,{
+      title: data.addRoleTitle,
+      salary: data.addRoleSalary,
+      department_id: data.addRoleDepartment
+    }
+    )
     console.log(data)
     resolve(data)
   })
